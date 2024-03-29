@@ -16,6 +16,9 @@
 
 ## Installation
 
+crea un archivo .env y añade esto y crea una base de datos 
+dejo el .env como ejemplo 
+DATABASE_URL="postgresql://postgres:error404@localhost:5432/db_cibernos"
 ```bash
 $ pnpm install
 $ npx prisma migrate dev
