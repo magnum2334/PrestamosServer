@@ -1,6 +1,5 @@
 ## solucion
 
-
 2. nestjs se instalo en su version 10.2.1 comando de verificacion nest -v.
 3. el [Configuration] se añadio en el app module comentario de gia //module Config
 4. se añadio la carpeta de prima para el manejo de consultas en el proyecto
@@ -21,6 +20,7 @@ dejo el .env como ejemplo
 DATABASE_URL="postgresql://postgres:error404@localhost:5432/db_cibernos"
 ```bash
 $ pnpm install
+$ pnpm add --save-dev @types/multer
 $ npx prisma migrate dev
 ```
 
