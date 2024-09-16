@@ -1,11 +1,8 @@
 import {
   Controller,
   Get,
-  Param,
   Post,
   Body,
-  Put,
-  Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
@@ -24,7 +21,8 @@ export class UserController {
   async createUser(
     @Body() createUserDto: CreateUserDto, // Usar el DTO como parámetro
   ) {
-    var newUser;
+    let newUser;
+    let user
     try {
       // Generar un hash seguro de la contraseña
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -33,15 +31,15 @@ export class UserController {
         ...createUserDto,
         password: hashedPassword,
       };
+       user = await this.userService.createUser(newUser);
     } catch (error) {
-      console.log("hola")
        this.logger.error(
          `Login user error: ${createUserDto.email}`,
          'AuthController : error',
          `Login user error: ${error}`,
        );
     }
-    return this.userService.createUser(newUser);
+   return user;
   }
 
   @Get('/')

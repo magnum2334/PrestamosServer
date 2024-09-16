@@ -10,9 +10,20 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TerminusModule } from '@nestjs/terminus';
 import { HealthController } from './health/health.controller';
 import { HealthModule } from './health/health.module';
+import { ClienteModule } from './cliente/cliente.module';
+import { RutaModule } from './ruta/ruta.module';
+//import { PrestamoService } from './prestamo/prestamo.service';
+import { PrestamoModule } from './prestamo/prestamo.module';
+import { PagoModule } from './pago/pago.module';
+import { JopModule } from './jop/jop.module';
+import { LoggerService } from 'log/logger.service';
+import { JopService } from './jop/jop.service';
+import { ScheduleModule } from '@nestjs/schedule';
+
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     AuthModule,
     FileModule,
     UsersModule,
@@ -24,6 +35,11 @@ import { HealthModule } from './health/health.module';
     }),
     EventEmitterModule.forRoot(),
     HealthModule,
+    ClienteModule,
+    RutaModule,
+    PrestamoModule,
+    PagoModule,
+    JopModule,
   ],
   controllers: [AppController, HealthController],
   providers: [
@@ -32,6 +48,7 @@ import { HealthModule } from './health/health.module';
       provide: APP_PIPE,
       useClass: ValidationPipe,
     },
+    //PrestamoService,
   ],
 })
 export class AppModule {}
