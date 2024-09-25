@@ -26,7 +26,7 @@ export class CreateUserDto {
   readonly rolId: number;
 
   @IsOptional()
-  @IsString()
+  @IsNumber()
   readonly managerId: number;
 
   @IsOptional()

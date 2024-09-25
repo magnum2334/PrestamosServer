@@ -2,12 +2,14 @@ import {
   Controller,
   Get,
   Post,
-  Body,
+  Body,ConflictException, 
+  HttpException
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoggerService } from 'log/logger.service';
+import { PrismaService } from 'prisma/prisma.service';
 
 
 @Controller('users')
@@ -15,31 +17,40 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly logger: LoggerService,
+    private prisma: PrismaService
   ) {}
 
   @Post('create')
-  async createUser(
-    @Body() createUserDto: CreateUserDto, // Usar el DTO como parámetro
-  ) {
-    let newUser;
-    let user
+  async createUser(@Body() createUserDto: CreateUserDto) {
     try {
-      // Generar un hash seguro de la contraseña
+      // Verificar si el correo electrónico ya existe
+       const existingUser = await this.prisma.user.findUnique({
+        where: { email: createUserDto.email },
+      });
+      if (existingUser) {
+        throw new ConflictException('El correo electrónico ya está registrado');
+      }
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
       // Crear un nuevo objeto de usuario con la contraseña encriptada
-      newUser = {
+      const newUser = {
         ...createUserDto,
         password: hashedPassword,
       };
-       user = await this.userService.createUser(newUser);
+
+      // Crear el usuario en la base de datos
+      const user = await this.userService.createUser(newUser);
+
+      return user;
+
     } catch (error) {
-       this.logger.error(
-         `Login user error: ${createUserDto.email}`,
-         'AuthController : error',
-         `Login user error: ${error}`,
-       );
+      // Si es una excepción ConflictException, se lanzará de nuevo
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      // Si es cualquier otro tipo de excepción, la lanzamos como un HttpException genérico
+      throw new HttpException('Error al crear el usuario', 500);
     }
-   return user;
   }
 
   @Get('/')
