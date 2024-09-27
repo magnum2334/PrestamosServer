@@ -2,32 +2,39 @@ import { IsString, IsInt, IsDate, IsOptional } from 'class-validator';
 
 export class CreatePrestamoDto {
   @IsString()
-  codigo: string;
+  codigo: string; // Code for the loan
 
   @IsInt()
-  valorPrestado: number;
+  valorPrestado: number; // Initial loan amount
 
   @IsInt()
-  valorTotal: number;
+  valorTotal: number; // Total value of the loan including interests
 
   @IsInt()
-  saldo: number;
+  saldo: number; // Remaining balance of the loan
 
   @IsInt()
-  cuotas: number;
+  cuotas: number; // Total number of installments
 
   @IsInt()
-  clienteId: number;
+  interes: number; // Interest amount or rate
+
+  @IsString()
+  frecuencia: string; // Frequency of payments (e.g., "monthly", "weekly", etc.)
 
   @IsInt()
-  cobradorId: number;
+  clienteId: number; // ID of the associated client
 
   @IsInt()
-  estadoId: number;
+  cobradorId: number; // ID of the associated collector
 
   @IsInt()
-  rutaId: number;
+  estadoId: number; // ID of the current loan status
 
+  @IsInt()
+  rutaId: number; // ID of the route associated with the loan
+
+  @IsOptional() // This field is optional
   @IsDate()
-  fecha_creacion?: Date;
+  fecha_creacion?: Date; // Creation date of the loan, defaults to now if not provided
 }

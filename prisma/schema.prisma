@@ -10,107 +10,110 @@ datasource db {
 // Modelo de Usuario
 model User {
   id             Int        @id @default(autoincrement())
-  email          String     @unique  // Correo electrónico único del usuario
-  password       String     // Contraseña del usuario
-  nombre         String?    // Nombre del usuario (opcional)
-  rol            Rol        @relation(fields: [rolId], references: [id])  // Relación con el rol del usuario
-  rolId          Int        // ID del rol asignado al usuario
-  estado         String     // Estado del usuario (activo, inactivo, etc.)
-  telefono       String?    // Número de teléfono del usuario (opcional)
-  fecha_creacion DateTime   @default(now())  // Fecha de creación del usuario
+  email          String     @unique // Correo electrónico único del usuario
+  password       String // Contraseña del usuario
+  nombre         String? // Nombre del usuario (opcional)
+  rol            Rol        @relation(fields: [rolId], references: [id]) // Relación con el rol del usuario
+  rolId          Int // ID del rol asignado al usuario
+  estado         String // Estado del usuario (activo, inactivo, etc.)
+  telefono       String? // Número de teléfono del usuario (opcional)
+  fecha_creacion DateTime   @default(now()) // Fecha de creación del usuario
   prestamos      Prestamo[] // Relación: lista de préstamos asociados a este usuario
-  rutas          Ruta[]     // Relación: lista de rutas asignadas a este usuario
-  capital        Capital[]  // Relación: lista de capitales gestionados por este usuario
+  rutas          Ruta[] // Relación: lista de rutas asignadas a este usuario
+  capital        Capital[] // Relación: lista de capitales gestionados por este usuario
 
   // Relación recursiva para el manager/subordinados
-  managerId      Int?       // ID del usuario que es manager de este usuario (opcional)
-  manager        User?      @relation("UserManager", fields: [managerId], references: [id])  // Relación recursiva con el manager
-  subordinates   User[]     @relation("UserManager")  // Lista de subordinados de este usuario
+  managerId    Int? // ID del usuario que es manager de este usuario (opcional)
+  manager      User?  @relation("UserManager", fields: [managerId], references: [id]) // Relación recursiva con el manager
+  subordinates User[] @relation("UserManager") // Lista de subordinados de este usuario
 }
 
 // Modelo de Cliente
 model Cliente {
   id             Int        @id @default(autoincrement())
-  nombre         String     // Nombre del cliente
-  identificacion String     // Identificación del cliente
-  telefono       String?    // Número de teléfono del cliente (opcional)
-  direccion      String?    // Dirección del cliente (opcional)
+  nombre         String? // Nombre del cliente
+  identificacion String? // Identificación del cliente
+  telefono       String? // Número de teléfono del cliente (opcional)
+  direccion      String? // Dirección del cliente (opcional)
   prestamos      Prestamo[] // Relación: lista de préstamos asociados a este cliente
-  ruta           Ruta?      @relation(fields: [rutaId], references: [id])  // Relación opcional con la ruta del cliente
-  rutaId         Int?       // ID de la ruta asignada al cliente (opcional)
-  fecha_creacion DateTime   @default(now())  // Fecha de creación del cliente
+  ruta           Ruta?      @relation(fields: [rutaId], references: [id]) // Relación opcional con la ruta del cliente
+  rutaId         Int? // ID de la ruta asignada al cliente (opcional)
+  fecha_creacion DateTime   @default(now()) // Fecha de creación del cliente
 }
 
 // Modelo de Préstamo
 model Prestamo {
-  id              Int            @id @default(autoincrement())
-  codigo          String         // Código del préstamo
-  valorPrestado   Int            // Valor inicial prestado en el préstamo
-  valorTotal      Int            // Valor total del préstamo (puede incluir intereses)
-  saldo           Int            // Saldo restante del préstamo
-  cuotas          Int            // Número total de cuotas del préstamo
-  Cliente         Cliente        @relation(fields: [clienteId], references: [id])  // Relación con el cliente al que se otorgó el préstamo
-  clienteId       Int            // ID del cliente asociado al préstamo
-  user            User           @relation(fields: [cobradorId], references: [id])  // Relación con el usuario que gestiona el préstamo (cobrador)
-  cobradorId      Int            // ID del usuario (cobrador) asociado al préstamo
-  estado          EstadoPrestamo @relation(fields: [estadoId], references: [id])  // Relación con el estado actual del préstamo
-  estadoId        Int            // ID del estado actual del préstamo
-  ruta            Ruta           @relation(fields: [rutaId], references: [id])  // Relación con la ruta asociada al préstamo
-  rutaId          Int            // ID de la ruta asociada al préstamo
-  fecha_creacion  DateTime       @default(now())  // Fecha de creación del préstamo
-  pagos           Pago[]         // Relación: lista de pagos asociados a este préstamo
+  id            Int    @id @default(autoincrement())
+  codigo        String // Código del préstamo
+  valorPrestado Int // Valor inicial prestado en el préstamo
+  valorTotal    Int // Valor total del préstamo (puede incluir intereses)
+  saldo         Int // Saldo restante del préstamo
+  cuotas        Int // Número total de cuotas del préstamo
+  interes       Int // Puedes ajustar el tipo de datos según tus necesidades para representar intereses
+  frecuencia    String
+
+  Cliente        Cliente        @relation(fields: [clienteId], references: [id]) // Relación con el cliente al que se otorgó el préstamo
+  clienteId      Int // ID del cliente asociado al préstamo
+  user           User           @relation(fields: [cobradorId], references: [id]) // Relación con el usuario que gestiona el préstamo (cobrador)
+  cobradorId     Int // ID del usuario (cobrador) asociado al préstamo
+  estado         EstadoPrestamo @relation(fields: [estadoId], references: [id]) // Relación con el estado actual del préstamo
+  estadoId       Int // ID del estado actual del préstamo
+  ruta           Ruta           @relation(fields: [rutaId], references: [id]) // Relación con la ruta asociada al préstamo
+  rutaId         Int // ID de la ruta asociada al préstamo
+  fecha_creacion DateTime       @default(now()) // Fecha de creación del préstamo
+  pagos          Pago[] // Relación: lista de pagos asociados a este préstamo
 }
 
 // Modelo de Pago
 model Pago {
-  id             Int        @id @default(autoincrement())
-  monto          Int        // Monto total pagado en este pago
-  abono          Int?       // Monto abonado a la cuota en este pago (opcional, puede ser null si es un pago completo)
-  interes        Int        // Puedes ajustar el tipo de datos según tus necesidades para representar intereses
-  prestamo       Prestamo   @relation(fields: [prestamoId], references: [id])  // Relación con el préstamo al que pertenece este pago
-  prestamoId     Int        // ID del préstamo asociado a este pago
-  numeroCuota    Int        // Número de la cuota que se está pagando en este pago
-  diasMora       Int        @default(0) // Campo para días de mora
-  fecha_creacion DateTime   @default(now())  // Fecha de creación del pago
+  id             Int      @id @default(autoincrement())
+  monto          Int // Monto total pagado en este pago
+  abono          Int? // Monto abonado a la cuota en este pago (opcional, puede ser null si es un pago completo)
+  fecha          String
+  prestamo       Prestamo @relation(fields: [prestamoId], references: [id]) // Relación con el préstamo al que pertenece este pago
+  prestamoId     Int // ID del préstamo asociado a este pago
+  numeroCuota    Int // Número de la cuota que se está pagando en este pago
+  diasMora       Int      @default(0) // Campo para días de mora
+  fecha_creacion DateTime @default(now()) // Fecha de creación del pago
 }
 
 // Modelo de Estado de Préstamo
 model EstadoPrestamo {
-  id          Int       @id @default(autoincrement())
-  descripcion String    // Descripción del estado del préstamo (activo, inactivo, etc.)
+  id          Int        @id @default(autoincrement())
+  descripcion String // Descripción del estado del préstamo (activo, inactivo, etc.)
   prestamos   Prestamo[] // Relación: lista de préstamos asociados a este estado
 }
 
 // Modelo de Ruta
 model Ruta {
-  id              Int       @id @default(autoincrement())
-  nombre          String    // Nombre de la ruta
-  cobrador        User      @relation(fields: [cobradorId], references: [id])  // Relación con el usuario (cobrador) asignado a esta ruta
-  cobradorId      Int       // ID del usuario (cobrador) asignado a esta ruta
-  interes         Int       // Tasa de interés aplicada en esta ruta
-  tMaximoPrestamo Int       // Máximo valor de préstamo permitido en esta ruta
-  interesLibre    Boolean   // Indica si esta ruta tiene interés libre (opcional)
-  fecha_creacion  DateTime  // Fecha de creación de la ruta
-  capital         Capital   @relation(fields: [capitalId], references: [id])  // Relación con el capital asociado a esta ruta
-  capitalId       Int       // ID del capital asociado a esta ruta
+  id              Int        @id @default(autoincrement())
+  nombre          String // Nombre de la ruta
+  cobrador        User       @relation(fields: [cobradorId], references: [id]) // Relación con el usuario (cobrador) asignado a esta ruta
+  cobradorId      Int // ID del usuario (cobrador) asignado a esta ruta
+  interes         Int // Tasa de interés aplicada en esta ruta
+  tMaximoPrestamo Int // Máximo valor de préstamo permitido en esta ruta
+  interesLibre    Boolean // Indica si esta ruta tiene interés libre (opcional)
+  fecha_creacion  DateTime // Fecha de creación de la ruta
+  capital         Capital    @relation(fields: [capitalId], references: [id]) // Relación con el capital asociado a esta ruta
+  capitalId       Int // ID del capital asociado a esta ruta
   prestamos       Prestamo[] // Relación: lista de préstamos asociados a esta ruta
   clientes        Cliente[] // Relación: lista de clientes asociados a esta ruta
 }
 
 // Modelo de Capital
 model Capital {
-  id             Int       @id @default(autoincrement())
-  fecha_creacion DateTime  @default(now())  // Fecha de creación del capital
-  usuario        User      @relation(fields: [usuarioId], references: [id])  // Relación con el usuario propietario del capital
-  usuarioId      Int       // ID del usuario propietario del capital
-  descripcion    String    // Descripción del capital
-  valor          Int       // Valor del capital
-  rutas          Ruta[]    // Relación: lista de rutas asociadas a este capital
+  id             Int      @id @default(autoincrement())
+  fecha_creacion DateTime @default(now()) // Fecha de creación del capital
+  usuario        User     @relation(fields: [usuarioId], references: [id]) // Relación con el usuario propietario del capital
+  usuarioId      Int // ID del usuario propietario del capital
+  descripcion    String // Descripción del capital
+  valor          Int // Valor del capital
+  rutas          Ruta[] // Relación: lista de rutas asociadas a este capital
 }
 
 // Modelo de Rol
 model Rol {
-  id          Int       @id @default(autoincrement())
-  descripcion String    @unique   // Descripción única del rol
-  users       User[]    // Relación: lista de usuarios asociados a este rol
+  id          Int    @id @default(autoincrement())
+  descripcion String @unique // Descripción única del rol
+  users       User[] // Relación: lista de usuarios asociados a este rol
 }

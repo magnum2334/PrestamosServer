@@ -1,20 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { LoggerService } from 'log/logger.service';
 import { PrestamoService } from 'src/prestamo/prestamo.service';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { PagoService } from 'src/pago/pago.service';
 
 @Controller('cliente')
 export class ClienteController {
   constructor(
     private readonly clienteService: ClienteService,
     private readonly prestamoService: PrestamoService,
+    private readonly pagoService: PagoService,
     private readonly logger: LoggerService,
-  ) {}
+  ) { }
 
   @Post('create')
   async create(@Body() data) {
     let newClient;
     let newPrestamo;
+    let newCuotas = [];
     try {
       newClient = await this.clienteService.create(data['cliente']);
       let prestamo = {
@@ -22,6 +26,18 @@ export class ClienteController {
         clienteId: newClient['id'],
       };
       newPrestamo = await this.prestamoService.create(prestamo);
+      for (const cuota of data['cuotasDetalles']) {
+        let cuotaData = {
+          numeroCuota: cuota.numeroCuota,  // Access the property correctly
+          monto: cuota.monto,               // Access the property correctly
+          fecha: cuota.fecha,               // Correctly assign fecha
+          abono: 0,
+          prestamoId: newPrestamo.id,       // Use newPrestamo.id to get the ID
+        };
+        let data = await this.pagoService.create(cuotaData);            // Log cuotaData to see the structure
+        newCuotas.push(data); // Assuming create is an async function
+      }
+
     } catch (error) {
       this.logger.error(
         `create cliente error o prestamo error : ${newClient} ${newPrestamo}`,
@@ -30,7 +46,7 @@ export class ClienteController {
       );
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-    return { success: true, newClient, newPrestamo };
+    return { success: true, newClient, newPrestamo, newCuotas };
   }
 
   @Get()

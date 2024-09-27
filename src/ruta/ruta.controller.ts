@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { RutaService } from './ruta.service';
 import { CreateRutaDto } from './dto/create-ruta.dto';
 import { UpdateRutaDto } from './dto/update-ruta.dto';
 import { LoggerService } from 'log/logger.service';
+
 @Controller('ruta')
 export class RutaController {
   constructor(
@@ -11,7 +12,7 @@ export class RutaController {
   ) {}
 
   @Post('create')
-  async create(@Body() createRutaDto) {
+  async create(@Body() createRutaDto: CreateRutaDto) {
     let ruta;
     try {
       ruta = await this.rutaService.create(createRutaDto);
@@ -33,6 +34,11 @@ export class RutaController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.rutaService.findOne(+id);
+  }
+
+  @Get('cobrador/:cobradorId') // Nueva ruta para buscar por cobradorId
+  findByCobradorId(@Param('cobradorId') cobradorId: string) {
+    return this.rutaService.findByCobradorId(+cobradorId);
   }
 
   @Patch(':id')

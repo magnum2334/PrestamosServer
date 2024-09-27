@@ -5,6 +5,7 @@ import { PrismaService } from 'prisma/prisma.service';
 @Injectable()
 export class RutaService {
   constructor(private prisma: PrismaService) {}
+
   create(ruta) {
     return this.prisma.ruta.create({
       data: ruta,
@@ -12,18 +13,32 @@ export class RutaService {
   }
 
   findAll() {
-    return `This action returns all ruta`;
+    return this.prisma.ruta.findMany(); // Cambiado para retornar todas las rutas
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} ruta`;
+    return this.prisma.ruta.findUnique({
+      where: { id },
+    });
   }
 
   update(id: number, updateRutaDto: UpdateRutaDto) {
-    return `This action updates a #${id} ruta`;
+    return this.prisma.ruta.update({
+      where: { id },
+      data: updateRutaDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} ruta`;
+    return this.prisma.ruta.delete({
+      where: { id },
+    });
+  }
+
+  // Nuevo método para buscar rutas por cobradorId
+  findByCobradorId(cobradorId: number) {
+    return this.prisma.ruta.findMany({
+      where: { cobradorId }, // Suponiendo que el modelo tiene este campo
+    });
   }
 }
