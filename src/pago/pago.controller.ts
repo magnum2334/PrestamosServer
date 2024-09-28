@@ -22,10 +22,6 @@ export class PagoController {
     return this.pagoService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePagoDto: UpdatePagoDto) {
-    return this.pagoService.update(+id, updatePagoDto);
-  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

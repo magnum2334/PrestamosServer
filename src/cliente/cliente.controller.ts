@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { LoggerService } from 'log/logger.service';
 import { PrestamoService } from 'src/prestamo/prestamo.service';
@@ -57,6 +57,20 @@ export class ClienteController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.clienteService.findOne(+id);
+  }
+  
+  @Get('prestamos/ruta/:rutaId')
+  async findPrestamosByRuta(@Param('rutaId', ParseIntPipe) rutaId: number) {
+    return this.pagoService.findPrestamosByRuta(rutaId);
+  }
+
+
+  @Post('prestamo/:prestamoId') // Usamos POST pero mantenemos la ruta
+  async findPrestamosPayment(
+    @Param('prestamoId', ParseIntPipe) prestamoId: number,
+    @Body('abono', ParseIntPipe) abono: number, // Recibimos el abono desde el cuerpo de la solicitud
+  ) {
+    return this.pagoService.findPrestamosPayment(prestamoId, abono);
   }
 
   @Delete(':id')
