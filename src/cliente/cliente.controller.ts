@@ -14,6 +14,7 @@ export class ClienteController {
     private readonly logger: LoggerService,
   ) { }
 
+  @UseGuards(AuthGuard)
   @Post('create')
   async create(@Body() data) {
     let newClient;
@@ -59,12 +60,13 @@ export class ClienteController {
     return this.clienteService.findOne(+id);
   }
   
+  @UseGuards(AuthGuard)
   @Get('prestamos/ruta/:rutaId')
   async findPrestamosByRuta(@Param('rutaId', ParseIntPipe) rutaId: number) {
     return this.pagoService.findPrestamosByRuta(rutaId);
   }
 
-
+  @UseGuards(AuthGuard)
   @Post('prestamo/:prestamoId') // Usamos POST pero mantenemos la ruta
   async findPrestamosPayment(
     @Param('prestamoId', ParseIntPipe) prestamoId: number,

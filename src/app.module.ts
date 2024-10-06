@@ -17,7 +17,7 @@ import { PrestamoModule } from './prestamo/prestamo.module';
 import { PagoModule } from './pago/pago.module';
 import { JopModule } from './jop/jop.module';
 import { LoggerService } from 'log/logger.service';
-import { JopService } from './jop/jop.service';
+import JopService from './jop/jop.service';
 import { ScheduleModule } from '@nestjs/schedule';
 
 
