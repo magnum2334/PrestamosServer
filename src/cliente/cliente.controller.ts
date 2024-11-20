@@ -71,8 +71,19 @@ export class ClienteController {
   async findPrestamosPayment(
     @Param('prestamoId', ParseIntPipe) prestamoId: number,
     @Body('abono', ParseIntPipe) abono: number, // Recibimos el abono desde el cuerpo de la solicitud
+    @Body('usuarioId', ParseIntPipe) usuarioId: number,
   ) {
-    return this.pagoService.findPrestamosPayment(prestamoId, abono);
+    return this.pagoService.findPrestamosPayment({ prestamoId, abono, usuarioId });
+  }
+
+  @UseGuards(AuthGuard) // Si estás usando autenticación
+  @Get('cartera/:usuarioId/:fechaInicio/:fechaFin')
+  async obtenerResumenCartera(
+    @Param('usuarioId') usuarioId: number,
+    @Param('fechaInicio') fechaInicio: string,
+    @Param('fechaFin') fechaFin: string,
+  ) {
+    return this.pagoService.obtenerResumenCartera(fechaInicio, fechaFin, usuarioId);
   }
 
   @Delete(':id')
@@ -80,3 +91,5 @@ export class ClienteController {
     return this.clienteService.remove(+id);
   }
 }
+
+

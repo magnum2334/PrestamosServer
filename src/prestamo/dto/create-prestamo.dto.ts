@@ -37,4 +37,8 @@ export class CreatePrestamoDto {
   @IsOptional() // This field is optional
   @IsDate()
   fecha_creacion?: Date; // Creation date of the loan, defaults to now if not provided
+  @IsOptional() // This field is optional
+  
+  @IsDate()
+  fecha_finalizacion?: Date; // Creation date of the loan, defaults to now if not provided
 }

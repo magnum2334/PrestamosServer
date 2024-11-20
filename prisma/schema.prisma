@@ -26,6 +26,8 @@ model User {
   managerId    Int? // ID del usuario que es manager de este usuario (opcional)
   manager      User?  @relation("UserManager", fields: [managerId], references: [id]) // Relación recursiva con el manager
   subordinates User[] @relation("UserManager") // Lista de subordinados de este usuario
+
+  LogAbono LogAbono[]
 }
 
 // Modelo de Cliente
@@ -62,6 +64,10 @@ model Prestamo {
   rutaId         Int // ID de la ruta asociada al préstamo
   fecha_creacion DateTime       @default(now()) // Fecha de creación del préstamo
   pagos          Pago[] // Relación: lista de pagos asociados a este préstamo
+  fecha_finalizacion DateTime?      // Fecha de finalización del préstamo (puede ser null si el préstamo aún no está pagado)
+
+
+  LogAbono LogAbono[]
 }
 
 // Modelo de Pago
@@ -75,6 +81,8 @@ model Pago {
   numeroCuota    Int // Número de la cuota que se está pagando en este pago
   diasMora       Int      @default(0) // Campo para días de mora
   fecha_creacion DateTime @default(now()) // Fecha de creación del pago
+
+  LogAbono LogAbono[]
 }
 
 // Modelo de Estado de Préstamo
@@ -117,3 +125,19 @@ model Rol {
   descripcion String @unique // Descripción única del rol
   users       User[] // Relación: lista de usuarios asociados a este rol
 }
+// Modelo de Log de Abonos
+model LogAbono {
+  id             Int      @id @default(autoincrement())
+  prestamo       Prestamo @relation(fields: [prestamoId], references: [id]) // Relación con el préstamo al que pertenece este abono
+  prestamoId     Int // ID del préstamo asociado al abono
+  pago           Pago     @relation(fields: [pagoId], references: [id]) // Relación con el pago asociado al abono
+  pagoId         Int // ID del pago asociado al abono
+  monto          Int // Monto abonado
+  fecha          DateTime @default(now()) // Fecha en que se realizó el abono
+  descripcion    String? // Descripción o notas del abono (opcional)
+  usuario        User     @relation(fields: [usuarioId], references: [id]) // Relación con el usuario que realizó el abono
+  usuarioId      Int // ID del usuario que realizó el abono
+  fecha_creacion DateTime @default(now()) // Fecha de creación del registro del log
+}
+
+

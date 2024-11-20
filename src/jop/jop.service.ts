@@ -10,8 +10,8 @@ export default class JopService {
 
     @Cron('* * * * *') 
     handleCron() {
-      this.logger.log('ALEJANDRO cron'); // Mensaje para verificar que el método handleCron se llama
+      this.logger.log('KEVIN cron'); // Mensaje para verificar que el método handleCron se llama
        this.pagos.actualizarDiasDeMoraYEstadoPrestamos();
-      console.log("hola mundo")
+      console.log("actualizarDiasDeMoraYEstadoPrestamos: ")
     }
 }
