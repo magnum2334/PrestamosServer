@@ -8,10 +8,10 @@ export default class JopService {
     // this.logger.log('JobService initialized'); // Mensaje para verificar que el servicio se inicializa
   }
 
-    @Cron('* * * * *') 
-    handleCron() {
-      this.logger.log('KEVIN cron'); // Mensaje para verificar que el método handleCron se llama
-       this.pagos.actualizarDiasDeMoraYEstadoPrestamos();
-      console.log("actualizarDiasDeMoraYEstadoPrestamos: ")
-    }
+  @Cron('* * * * *')
+  handleCron() {
+    this.logger.log('KEVIN cron'); // Mensaje para verificar que el método handleCron se llama
+    this.pagos.actualizarDiasDeMoraYEstadoPrestamos();
+    console.log("actualizarDiasDeMoraYEstadoPrestamos: ")
+  }
 }

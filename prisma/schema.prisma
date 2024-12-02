@@ -28,6 +28,8 @@ model User {
   subordinates User[] @relation("UserManager") // Lista de subordinados de este usuario
 
   LogAbono LogAbono[]
+
+  Gasto Gasto[]
 }
 
 // Modelo de Cliente
@@ -54,18 +56,17 @@ model Prestamo {
   interes       Int // Puedes ajustar el tipo de datos según tus necesidades para representar intereses
   frecuencia    String
 
-  Cliente        Cliente        @relation(fields: [clienteId], references: [id]) // Relación con el cliente al que se otorgó el préstamo
-  clienteId      Int // ID del cliente asociado al préstamo
-  user           User           @relation(fields: [cobradorId], references: [id]) // Relación con el usuario que gestiona el préstamo (cobrador)
-  cobradorId     Int // ID del usuario (cobrador) asociado al préstamo
-  estado         EstadoPrestamo @relation(fields: [estadoId], references: [id]) // Relación con el estado actual del préstamo
-  estadoId       Int // ID del estado actual del préstamo
-  ruta           Ruta           @relation(fields: [rutaId], references: [id]) // Relación con la ruta asociada al préstamo
-  rutaId         Int // ID de la ruta asociada al préstamo
-  fecha_creacion DateTime       @default(now()) // Fecha de creación del préstamo
-  pagos          Pago[] // Relación: lista de pagos asociados a este préstamo
-  fecha_finalizacion DateTime?      // Fecha de finalización del préstamo (puede ser null si el préstamo aún no está pagado)
-
+  Cliente            Cliente        @relation(fields: [clienteId], references: [id]) // Relación con el cliente al que se otorgó el préstamo
+  clienteId          Int // ID del cliente asociado al préstamo
+  user               User           @relation(fields: [cobradorId], references: [id]) // Relación con el usuario que gestiona el préstamo (cobrador)
+  cobradorId         Int // ID del usuario (cobrador) asociado al préstamo
+  estado             EstadoPrestamo @relation(fields: [estadoId], references: [id]) // Relación con el estado actual del préstamo
+  estadoId           Int // ID del estado actual del préstamo
+  ruta               Ruta           @relation(fields: [rutaId], references: [id]) // Relación con la ruta asociada al préstamo
+  rutaId             Int // ID de la ruta asociada al préstamo
+  fecha_creacion     DateTime       @default(now()) // Fecha de creación del préstamo
+  pagos              Pago[] // Relación: lista de pagos asociados a este préstamo
+  fecha_finalizacion DateTime? // Fecha de finalización del préstamo (puede ser null si el préstamo aún no está pagado)
 
   LogAbono LogAbono[]
 }
@@ -125,6 +126,7 @@ model Rol {
   descripcion String @unique // Descripción única del rol
   users       User[] // Relación: lista de usuarios asociados a este rol
 }
+
 // Modelo de Log de Abonos
 model LogAbono {
   id             Int      @id @default(autoincrement())
@@ -140,4 +142,12 @@ model LogAbono {
   fecha_creacion DateTime @default(now()) // Fecha de creación del registro del log
 }
 
+model Gasto {
+  id    Int @id @default(autoincrement())
+  valor Int 
+  descripcion    String? // Descripción o notas del abono (opcional)
+  fecha DateTime 
 
+  usuario        User     @relation(fields: [usuarioId], references: [id])
+  usuarioId      Int // ID del usuario que realizó el gasto
+}

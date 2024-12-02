@@ -37,13 +37,14 @@ export class UserController {
         ...createUserDto,
         password: hashedPassword,
       };
-
+      console.log()
       // Crear el usuario en la base de datos
       const user = await this.userService.createUser(newUser);
 
       return user;
 
     } catch (error) {
+      console.log(error)
       // Si es una excepción ConflictException, se lanzará de nuevo
       if (error instanceof ConflictException) {
         throw error;

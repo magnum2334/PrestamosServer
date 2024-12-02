@@ -13,6 +13,13 @@ async function main() {
       create: rol,
     });
   }
+  //, 
+  const estadoSPrestamo = [{ data: {descripcion: 'ACTIVO'} }, { data: {descripcion: 'MORA'} },  { data: {descripcion: 'FINALIZADO'} }];
+
+ 
+  for (const estadoPestamo of estadoSPrestamo) {
+    await prisma.estadoPrestamo.create(estadoPestamo);
+  }
 
   // Obtener los roles recién creados
   const adminRole = await prisma.rol.findUnique({
@@ -42,7 +49,7 @@ async function main() {
       estado: 'inactive',
       telefono: '987654321',
       fecha_creacion: new Date(),
-      managerId: null,
+      managerId: 1,
     },
   ];
 
@@ -65,9 +72,10 @@ async function main() {
       fecha_creacion: new Date(),
       usuarioId: cobradorUser.id,
       descripcion: 'Capital inicial',
-      valor: 10000,
+      valor: 1000000,
     },
   });
+  
 
   // Crear Ruta y asociarla al capital y cobrador
   await prisma.ruta.create({
@@ -75,7 +83,7 @@ async function main() {
       nombre: 'Ruta 1',
       cobradorId: cobradorUser.id,
       interes: 5,
-      tMaximoPrestamo: 1000,
+      tMaximoPrestamo: 1000000,
       interesLibre: true,
       fecha_creacion: new Date(),
       capitalId: capital.id,

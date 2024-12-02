@@ -2,7 +2,7 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APP_PIPE } from '@nestjs/core';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule, jwtSecret } from './auth/auth.module';
 import { UsersModule } from './users/user.module';
 import { FileModule } from './file/file.module';
 import { ConfigModule } from '@nestjs/config';
@@ -19,10 +19,13 @@ import { JopModule } from './jop/jop.module';
 import { LoggerService } from 'log/logger.service';
 import JopService from './jop/jop.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { GastoModule } from './gasto/gasto.module';
+import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
   imports: [
+    
     ScheduleModule.forRoot(),
     AuthModule,
     FileModule,
@@ -40,6 +43,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     PrestamoModule,
     PagoModule,
     JopModule,
+    GastoModule,
   ],
   controllers: [AppController, HealthController],
   providers: [
