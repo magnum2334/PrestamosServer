@@ -10,6 +10,8 @@ export default class JopService {
 
   @Cron('0 * * * *')
   handleCron() {
+    console.log('actualizar Dias De Mora Y Estado de Prestamos: ', new Date().toISOString());
     this.pagos.actualizarDiasDeMoraYEstadoPrestamos();
   }
+  
 }
