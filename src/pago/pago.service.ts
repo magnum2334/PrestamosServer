@@ -392,6 +392,9 @@ export class PagoService {
     const fechaHoy = hoy.toISOString().split('T')[0]; // Obtener solo la parte de la fecha (YYYY-MM-DD)
 
     let gastosHoy = await this.prisma.gasto.findMany({
+      where: {
+        usuarioId: parseInt(usuarioId) 
+      },
       orderBy: {
         fecha: 'desc',
       },
