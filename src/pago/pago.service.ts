@@ -168,19 +168,20 @@ export class PagoService {
     try {
       const prestamos = await this.prisma.prestamo.findMany({
         where: {
-          rutaId, // Asumiendo que el modelo 'prestamo' tiene un campo 'rutaId' que referencia la ruta
+          rutaId,
         },
         include: {
           pagos: {
             orderBy: {
-              numeroCuota: 'asc', // Ordena los pagos por la fecha (en formato string 'YYYY-MM-DD') de manera ascendente
+              numeroCuota: 'asc'
             }
           },
           estado: true,
-          Cliente: true // Incluye también los pagos relacionados si es necesario
+          Cliente: true 
         },
-
-
+        orderBy: {
+          fecha_creacion: 'desc',
+        },
       });
 
       if (!prestamos || prestamos.length === 0) {
@@ -401,10 +402,10 @@ export class PagoService {
         fecha: true,
       },
     });
-    console.log(gastosHoy)
+    console.log("gastos", gastosHoy)
     gastosHoy = gastosHoy.filter(gasto => gasto.fecha.toISOString().split('T')[0] === fechaHoy);
     const totalGastosHoy = gastosHoy.reduce((total, gasto) => total + gasto.valor, 0);
-    console.log(prestamosHoy)
+    console.log("prestamosHoy", prestamosHoy)
     return {
       prestamosRango,
       abonosHoy,
