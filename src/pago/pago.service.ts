@@ -391,9 +391,6 @@ export class PagoService {
     const fechaHoy = hoy.toISOString().split('T')[0]; // Obtener solo la parte de la fecha (YYYY-MM-DD)
 
     let gastosHoy = await this.prisma.gasto.findMany({
-      where: {
-        usuarioId: parseInt(usuarioId),
-      },
       orderBy: {
         fecha: 'desc',
       },
@@ -404,6 +401,7 @@ export class PagoService {
         fecha: true,
       },
     });
+    console.log(gastosHoy)
     gastosHoy = gastosHoy.filter(gasto => gasto.fecha.toISOString().split('T')[0] === fechaHoy);
     const totalGastosHoy = gastosHoy.reduce((total, gasto) => total + gasto.valor, 0);
     console.log(prestamosHoy)
