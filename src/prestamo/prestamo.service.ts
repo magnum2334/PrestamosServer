@@ -34,15 +34,15 @@ export class PrestamoService {
       }
 
       // Extraer el total de valor prestado y el capital disponible
-      const totalValorPrestado = totalPrestamos._sum.valorPrestado || 0;
-      const capitalDisponible = ruta.capital.valor;
+      // const totalValorPrestado = totalPrestamos._sum.valorPrestado || 0;
+      // const capitalDisponible = ruta.capital.valor;
 
-      // Extraer el total de valor prestado y el capital disponible
-      if (totalValorPrestado + valorPrestado > capitalDisponible) {
-        throw new Error(
-          'El total de préstamos excede el capital disponible de la ruta',
-        );
-      }
+      // // Extraer el total de valor prestado y el capital disponible
+      // if (totalValorPrestado + valorPrestado > capitalDisponible) {
+      //   throw new Error(
+      //     'El total de préstamos excede el capital disponible de la ruta',
+      //   );
+      // }
 
       // Crear el préstamo si la validación es exitosa
       const nuevoPrestamo = await prismaClient.prestamo.create({

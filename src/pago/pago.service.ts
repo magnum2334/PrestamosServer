@@ -405,10 +405,10 @@ export class PagoService {
         fecha: true,
       },
     });
-    console.log("gastos", gastosHoy)
+    console.log("gastos fecha", gastosHoy)
     gastosHoy = gastosHoy.filter(gasto => gasto.fecha.toISOString().split('T')[0] === fechaHoy);
+    console.log("gastos filtro Hoy", gastosHoy)
     const totalGastosHoy = gastosHoy.reduce((total, gasto) => total + gasto.valor, 0);
-    console.log("prestamosHoy", prestamosHoy)
     return {
       prestamosRango,
       abonosHoy,
