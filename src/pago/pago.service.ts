@@ -302,9 +302,6 @@ export class PagoService {
 
   // Función para obtener el resumen de la cartera de un usuario específico
   async obtenerResumenCartera(fechaInicioParams: string, fechaFinParams: string, usuarioId) {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-
     const fechaInicio = new Date(`${fechaInicioParams}T00:00:00Z`); // Usa la zona horaria UTC (Z)
     const fechaFin = new Date(`${fechaFinParams}T23:59:59Z`);  // Fin del día, 23:59:59
 
@@ -327,8 +324,8 @@ export class PagoService {
       where: {
         usuarioId: parseInt(usuarioId), // Filtrar abonos por usuario
         fecha: {
-          gte: hoy,
-          lte: new Date(),
+          gte: new Date(fechaInicio),
+          lte: new Date(fechaFin),
         },
       },
       orderBy: {
@@ -361,9 +358,9 @@ export class PagoService {
       where: {
         cobradorId: parseInt(usuarioId),
         fecha_creacion: {
-          gte: hoy,
-          lte: new Date(),
-        },// Filtrar por usuario
+          gte: new Date(fechaInicio),
+          lte: new Date(fechaFin),
+        },
       },
     });
     // 4. Contar préstamos activos para el usuario
@@ -387,13 +384,7 @@ export class PagoService {
     const gananciasTotal = prestamos.reduce((total, prestamo) => {
       return total + (prestamo.valorTotal - prestamo.valorPrestado);
     }, 0);
-
-    
-    const fechaHoy = hoy.toISOString().split('T')[0]; // Obtener solo la parte de la fecha (YYYY-MM-DD)
-
-    const inicioHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-    const finHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
-
+ 
     const gastosHoy = await this.prisma.gasto.findMany({
       where: {
         usuarioId: parseInt(usuarioId),
