@@ -398,8 +398,8 @@ export class PagoService {
       where: {
         usuarioId: parseInt(usuarioId),
         fecha: {
-          gte: inicioHoy, // Mayor o igual al inicio del día
-          lt: finHoy,     // Menor al inicio del siguiente día
+          gte: new Date(fechaInicio),
+          lte: new Date(fechaFin),
         },
       },
       orderBy: {
@@ -412,7 +412,6 @@ export class PagoService {
         fecha: true,
       },
     });
-    console.log("gastos filtro Hoy", gastosHoy ,inicioHoy, finHoy);
     const totalGastosHoy = gastosHoy.reduce((total, gasto) => total + gasto.valor, 0);
     return {
       prestamosRango,
