@@ -391,9 +391,16 @@ export class PagoService {
     
     const fechaHoy = hoy.toISOString().split('T')[0]; // Obtener solo la parte de la fecha (YYYY-MM-DD)
 
-    let gastosHoy = await this.prisma.gasto.findMany({
+    const inicioHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+    const finHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
+
+    const gastosHoy = await this.prisma.gasto.findMany({
       where: {
-        usuarioId: parseInt(usuarioId) 
+        usuarioId: parseInt(usuarioId),
+        fecha: {
+          gte: inicioHoy, // Mayor o igual al inicio del día
+          lt: finHoy,     // Menor al inicio del siguiente día
+        },
       },
       orderBy: {
         fecha: 'desc',
@@ -405,9 +412,7 @@ export class PagoService {
         fecha: true,
       },
     });
-    console.log("gastos fecha", gastosHoy)
-    gastosHoy = gastosHoy.filter(gasto => gasto.fecha.toISOString().split('T')[0] === fechaHoy);
-    console.log("gastos filtro Hoy", gastosHoy)
+    console.log("gastos filtro Hoy", gastosHoy ,inicioHoy, finHoy);
     const totalGastosHoy = gastosHoy.reduce((total, gasto) => total + gasto.valor, 0);
     return {
       prestamosRango,
