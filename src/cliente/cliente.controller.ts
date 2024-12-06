@@ -73,8 +73,9 @@ export class ClienteController {
     @Param('prestamoId', ParseIntPipe) prestamoId: number,
     @Body('abono', ParseIntPipe) abono: number, // Recibimos el abono desde el cuerpo de la solicitud
     @Body('usuarioId', ParseIntPipe) usuarioId: number,
+    @Body('fecha_creacion') fecha_creacion: string,
   ) {
-    return this.pagoService.findPrestamosPayment({ prestamoId, abono, usuarioId });
+    return this.pagoService.findPrestamosPayment({ prestamoId, abono, usuarioId, fecha_creacion });
   }
 
   @UseGuards(AuthGuard) // Si estás usando autenticación

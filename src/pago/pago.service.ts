@@ -6,7 +6,7 @@ export class PagoService {
   constructor(private prisma: PrismaService) { }
 
   async findPrestamosPayment(data) {
-    const { abono, usuarioId, prestamoId } = data;
+    const { abono, usuarioId, prestamoId, fecha_creacion } = data;
     if (abono <= 0) {
       throw new Error("El abono debe ser mayor que 0");
     }
@@ -74,10 +74,10 @@ export class PagoService {
               prestamoId: prestamoId,
               pagoId: pago.id,
               monto: abonoUsado,
-              fecha: new Date(),
+              fecha: new Date(fecha_creacion),
               descripcion: `Abono a la cuota ${pago.numeroCuota}`,
               usuarioId: usuarioId,
-              fecha_creacion: new Date(),
+              fecha_creacion: new Date(fecha_creacion),
             },
           });
         }
