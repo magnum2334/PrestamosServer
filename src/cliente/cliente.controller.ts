@@ -25,6 +25,7 @@ export class ClienteController {
       let prestamo = {
         ...data['prestamo'],
         clienteId: newClient['id'],
+        fecha_creacion: new Date(data['prestamo']['fecha_creacion']),
       };
       newPrestamo = await this.prestamoService.create(prestamo);
       for (const cuota of data['cuotasDetalles']) {
