@@ -1,93 +1,99 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Crear Roles
-  const roles = [{ descripcion: 'ADMINISTRADOR' }, { descripcion: 'COBRADOR' }];
+  await prisma.$transaction(async (transaction) => {
+    // Crear Roles
+    const roles = [{ descripcion: 'ADMINISTRADOR' }, { descripcion: 'COBRADOR' }];
 
-  for (const rol of roles) {
-    await prisma.rol.upsert({
-      where: { descripcion: rol.descripcion },
-      update: {},
-      create: rol,
-    });
-  }
-  //, 
-  const estadoSPrestamo = [{ data: {descripcion: 'ACTIVO'} }, { data: {descripcion: 'MORA'} },  { data: {descripcion: 'FINALIZADO'} }];
+    for (const rol of roles) {
+      await transaction.rol.upsert({
+        where: { descripcion: rol.descripcion },
+        update: {},
+        create: rol,
+      });
+    }
+
+    const adminRole = await transaction.rol.findUnique({ where: { descripcion: 'ADMINISTRADOR' } });
+    const cobradorRole = await transaction.rol.findUnique({ where: { descripcion: 'COBRADOR' } });
+
+    if (!adminRole || !cobradorRole) {
+      throw new Error('No se encontraron los roles necesarios.');
+    }
+    const estadoSPrestamo = [{ data: {descripcion: 'ACTIVO'} }, { data: {descripcion: 'MORA'} },  { data: {descripcion: 'FINALIZADO'} }];
 
  
-  for (const estadoPestamo of estadoSPrestamo) {
-    await prisma.estadoPrestamo.create(estadoPestamo);
-  }
-
-  // Obtener los roles recién creados
-  const adminRole = await prisma.rol.findUnique({
-    where: { descripcion: 'ADMINISTRADOR' },
-  });
-  const cobradorRole = await prisma.rol.findUnique({
-    where: { descripcion: 'COBRADOR' },
-  });
-
-  // Crear Usuarios
-  const users = [
-    {
-      email: 'john.doe@example.com',
-      password: 'securepassword123',
-      nombre: 'John Doe',
-      rolId: adminRole.id,
-      estado: 'active',
-      telefono: '123456789',
-      fecha_creacion: new Date(),
-      managerId: null,
-    },
-    {
-      email: 'jane.smith@example.com',
-      password: 'anothersecurepassword456',
-      nombre: 'Jane Smith',
-      rolId: cobradorRole.id,
-      estado: 'inactive',
-      telefono: '987654321',
-      fecha_creacion: new Date(),
-      managerId: 1,
-    },
-  ];
-
-  for (const user of users) {
-    await prisma.user.upsert({
-      where: { email: user.email },
-      update: {},
-      create: user,
-    });
-  }
-
-  // Obtener el usuario cobrador
-  const cobradorUser = await prisma.user.findUnique({
-    where: { email: 'jane.smith@example.com' },
-  });
-
-  // Crear Capital y asociarlo al usuario con el rol 2 (cobrador)
-  const capital = await prisma.capital.create({
-    data: {
-      fecha_creacion: new Date(),
-      usuarioId: cobradorUser.id,
-      descripcion: 'Capital inicial',
-      valor: 1000000,
-    },
-  });
+    for (const estadoPestamo of estadoSPrestamo) {
+      await prisma.estadoPrestamo.create(estadoPestamo);
+    }
   
+    // Crear Manager
+    const manager = await transaction.user.create({
+      data: {
+        email: 'manager@gmail.com',
+        password: await bcrypt.hash('error404@', 10),
+        nombre: 'logos',
+        rolId: adminRole.id,
+        estado: 'active',
+        telefono: '111111111',
+        fecha_creacion: new Date(),
+      },
+    });
 
-  // Crear Ruta y asociarla al capital y cobrador
-  await prisma.ruta.create({
-    data: {
-      nombre: 'Ruta 1',
-      cobradorId: cobradorUser.id,
-      interes: 5,
-      tMaximoPrestamo: 1000000,
-      interesLibre: true,
-      fecha_creacion: new Date(),
-      capitalId: capital.id,
-    },
+    // Crear Usuarios
+    const users = [
+      {
+        email: 'cobrador@gmail.com',
+        password: await bcrypt.hash('error404@', 10),
+        nombre: 'cobrador user',
+        rolId: cobradorRole.id,
+        estado: 'active',
+        telefono: '123456789',
+        fecha_creacion: new Date(),
+        managerId: manager.id,
+      },
+    ];
+
+    for (const user of users) {
+      await transaction.user.upsert({
+        where: { email: user.email },
+        update: {},
+        create: user,
+      });
+    }
+
+    const cobradorUser = await transaction.user.findUnique({
+      where: { email: 'cobrador@gmail.com' },
+    });
+
+    if (!cobradorUser) {
+      throw new Error('El usuario cobrador no se pudo encontrar.');
+    }
+
+    // Crear Capital
+    const capital = await transaction.capital.create({
+      data: {
+        fecha_creacion: new Date(),
+        usuarioId: cobradorUser.id,
+        descripcion: 'Capital inicial',
+        valor: 1000000,
+      },
+    });
+
+    // Crear Ruta
+    await transaction.ruta.create({
+      data: {
+        nombre: 'DOSQUEBRADAS',
+        cobradorId: cobradorUser.id,
+        interes: 5,
+        tMaximoPrestamo: 1000000,
+        interesLibre: true,
+        fecha_creacion: new Date(),
+        capitalId: capital.id,
+      },
+    });
   });
 }
 

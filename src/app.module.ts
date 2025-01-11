@@ -21,6 +21,7 @@ import JopService from './jop/jop.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { GastoModule } from './gasto/gasto.module';
 import { JwtModule } from '@nestjs/jwt';
+import { WebsocketModule } from 'websocket/websocket.module';
 
 
 @Module({
@@ -44,6 +45,7 @@ import { JwtModule } from '@nestjs/jwt';
     PagoModule,
     JopModule,
     GastoModule,
+    WebsocketModule,
   ],
   controllers: [AppController, HealthController],
   providers: [

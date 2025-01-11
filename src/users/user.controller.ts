@@ -37,7 +37,6 @@ export class UserController {
         ...createUserDto,
         password: hashedPassword,
       };
-      console.log()
       // Crear el usuario en la base de datos
       const user = await this.userService.createUser(newUser);
 

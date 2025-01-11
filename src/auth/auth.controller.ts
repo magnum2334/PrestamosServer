@@ -10,9 +10,9 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './guard/auth.guard';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { LoggerService } from 'log/logger.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { PublicEndpoint } from 'src/utils/public-endpoint.decorator';
+import { LoggerService } from 'log/logger.service';
 
 @Controller('auth')
 export class AuthController {
